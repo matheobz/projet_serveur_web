@@ -2,12 +2,14 @@
   <div>
     <div class="grid">
       <div class="column">
-    <h1>Notre sélection de Bières</h1>
-</div>
-<div class="column">
-      <span class="material-symbols-outlined"> shopping_cart </span>
-</div>
-
+        <h1>Notre sélection de Bières</h1>
+      </div>
+      <div class="column">
+        <div class="boutton">
+          <span class="material-symbols-outlined"> shopping_cart</span>
+          <span class="Panier"> Panier</span>
+        </div>
+      </div>
     </div>
 
     <div class="beer-container">
@@ -90,23 +92,50 @@ h1 {
   cursor: pointer;
 }
 
-.material-symbols-outlined {
+.boutton {
+  padding: 6px;
+  border-radius: 6px;
+  transition: 0.2s;
+  background-color: rgb(24, 24, 223);
+  width: 110px;
+  display: flex; /* Utilisez flex pour centrer le contenu du bouton */
+  justify-content: center; /* Centre horizontalement */
+  align-items: center; /* Centre verticalement */
+  margin: 0 auto; /* Centre le bouton dans le conteneur .column */
+    cursor: pointer;
+}
+
+.boutton .material-symbols-outlined {
   font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
-  font-size: 2.5em;
-  cursor: pointer;
-  right: 30px;
+  font-size: 1.5rem;
+  color: #ffffff;
+  top: 2px;
+  position: relative;
+}
+
+.boutton .Panier {
+  font-size: 1.5rem;
+  background-color: rgb(24, 24, 223);
+  color: #ffffff;
+  margin: 0 0 0 5px;
+}
+
+.boutton:hover {
+  transform: scale(1.05)
 }
 
 .grid {
   display: flex;
+  justify-content: center; /* Centre horizontalement */
+  align-items: center; /* Centre verticalement (si vos colonnes ont la même hauteur) */
   margin: 40px auto 50px auto;
-
 }
 
 .grid .column {
-  width: 50%;
+  flex: 1; /* Assure que les colonnes prennent une largeur égale */
   display: flex;
-  flex-direction: column;
+  justify-content: center; /* Centre horizontalement les éléments à l'intérieur de la colonne */
+  align-items: center; /* Centre verticalement */
   text-align: center;
 }
 </style>
