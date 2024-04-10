@@ -1,0 +1,164 @@
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    /* font-size: 100%; */
+    /* font: inherit; */
+    vertical-align: baseline;
+}
+
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+    display: block;
+}
+
+body {
+    line-height: 1;
+}
+
+ol,
+ul {
+    list-style: none;
+}
+
+blockquote,
+q {
+    quotes: none;
+}
+
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
+    content: '';
+    content: none;
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+/*---------FIN DU RESET---------*/
+
+:root {
+    --color-primary-color: rgb(43, 32, 197);
+    /* #b03be8 */
+    --color-secondary-color: rgb(21, 255, 157);
+    /* #6757e7 */
+    --color-third-color: #22b0d3;
+    /* #4958f5 */
+
+    --color-fadeText1-color: #0084ff;
+    /* #4b8aff #0084ff  */
+    --color-fadeText2-color: #00ff9d;
+    /* #26d8c0 #00ff9d */
+
+    --color-bg2-color: #25262d;
+    /* #25262d */
+
+    --color-bgFade1-color: #112852;
+    /* #090b1f  0d3941 112852*/
+    --color-bgFade2-color: #232338;
+    /* #401355 232338*/
+
+}
+
+body {
+    scroll-behavior: smooth;
+    font-family: "Mona Sans", "Mona Sans Fallback", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+
+}
+
+.invisible {
+    position: absolute;
+}
