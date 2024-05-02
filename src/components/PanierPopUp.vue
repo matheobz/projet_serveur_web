@@ -1,12 +1,19 @@
 <template>
   <div>
     <div class="boutton" @click="togglePopup">
-      <span class="material-symbols-outlined"> shopping_cart</span>
+      <span class="material-symbols-outlined">shopping_cart</span>
     </div>
 
     <div v-if="showPopup" class="popup-overlay" @click="togglePopup">
       <div class="popup-content" @click.stop>
-        <p>Votre panier a été mis à jour !</p>
+        <h2>Votre panier</h2>
+        <ul>
+          <li v-for="beer in beers" :key="beer.name">
+            {{ beer.name }} - {{ beer.price }}€
+          </li>
+        </ul>
+        <p>Total : {{ total }}€</p>
+        <button @click="checkout">Passer à la caisse</button>
         <button @click="togglePopup">Fermer</button>
       </div>
     </div>
@@ -18,21 +25,30 @@ export default {
   data() {
     return {
       beers: [],
-      showPopup: false, // Contrôle l'affichage du pop-up
+      showPopup: false,
     };
   },
-  // autres propriétés et méthodes inchangées...
+  computed: {
+    total() {
+      return this.beers.reduce((acc, beer) => acc + beer.price, 0);
+    },
+  },
   methods: {
     addToCart(beer) {
       console.log("Ajout de la bière au panier :", beer);
-      // Logique existante...
+      // Logique pour ajouter à `beers`...
     },
     togglePopup() {
-      this.showPopup = !this.showPopup; // Bascule l'état du pop-up
+      this.showPopup = !this.showPopup;
+    },
+    checkout() {
+      console.log("Passer à la caisse");
+      // Logique pour la caisse...
     },
   },
 };
 </script>
+
 
 <style scoped>
 .popup-overlay {
