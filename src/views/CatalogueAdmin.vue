@@ -4,6 +4,8 @@
     <ul class="list-group">
       <li v-for="brasserie in brasseries" :key="brasserie.id" class="list-group-item">
         <strong>{{ brasserie.nom }}</strong> - {{ brasserie.localisation }}
+        <img :src="brasserie.imageUrl || 'https://www.lejuke-box.fr/wp-content/uploads/2019/10/abendbrot-939435_1920-1080x675.jpg'" alt="Image de la brasserie" width="100">
+        <input type="file" @change="uploadBrasserieImage($event, brasserie.id)">
         <button @click="deleteBrasserie(brasserie.id)" class="btn btn-danger btn-sm mx-2">Supprimer</button>
         <button @click="toggleBiereView(brasserie.id)" class="btn btn-info btn-sm">Voir les bières</button>
 
@@ -12,6 +14,8 @@
           <ul class="list-group">
             <li v-for="biere in bieres" :key="biere.id" class="list-group-item">
               {{ biere.nom }} - {{ biere.type }} - {{ biere.degreAlcool }}% - {{ biere.prix }}€
+              <img :src="biere.imageUrl || 'https://www.1001cocktails.com/wp-content/uploads/1001cocktails/2023/07/shutterstock_2173861113-scaled.jpg'" alt="Image de la bière" width="100">
+              <input type="file" @change="uploadBiereImage($event, biere.id)">
               <button @click="deleteBiere(biere.id)" class="btn btn-danger btn-sm float-right">Supprimer</button>
             </li>
           </ul>
@@ -25,7 +29,6 @@
             <button @click="addBiere(brasserie.id)" class="btn btn-primary mb-2">Ajouter</button>
           </div>
         </div>
-
       </li>
     </ul>
     <div class="form-inline mt-4">
@@ -38,7 +41,8 @@
 
 
 <script>
-import { getFirestore, collection, addDoc, doc, deleteDoc, onSnapshot } from "firebase/firestore";
+import { getFirestore, collection, addDoc, doc, deleteDoc, onSnapshot, updateDoc } from "firebase/firestore";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 export default {
   data() {
@@ -114,6 +118,30 @@ export default {
 
       // Supprimer la bière
       await deleteDoc(biereDoc);
+    },
+    async uploadBrasserieImage(event, brasserieId) {
+      const file = event.target.files[0];
+      if (file) {
+        const storage = getStorage();
+        const storageRef = ref(storage, `brasseries/${brasserieId}/${file.name}`);
+        await uploadBytes(storageRef, file);
+        const imageUrl = await getDownloadURL(storageRef);
+        const db = getFirestore();
+        const brasserieDoc = doc(db, "brasseries", brasserieId);
+        await updateDoc(brasserieDoc, { imageUrl });
+      }
+    },
+    async uploadBiereImage(event, biereId) {
+      const file = event.target.files[0];
+      if (file) {
+        const storage = getStorage();
+        const storageRef = ref(storage, `bieres/${biereId}/${file.name}`);
+        await uploadBytes(storageRef, file);
+        const imageUrl = await getDownloadURL(storageRef);
+        const db = getFirestore();
+        const biereDoc = doc(db, "brasseries", this.currentBrasserieId, "bieres", biereId);
+        await updateDoc(biereDoc, { imageUrl });
+      }
     }
   }
 };
