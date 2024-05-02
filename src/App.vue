@@ -1,12 +1,43 @@
 <template>
-  <nav>
-    <router-link class="marginNav" to="/"> Home </router-link>
-    <router-link class="marginNav" to="/catalogueAdmin"> Catalogue admin </router-link>
-    <router-link class="marginNav" to="/feed"> Feed </router-link>
-    <router-link class="marginNav" to="/register"> Register </router-link>
-    <router-link class="marginNav" to="/sign-in"> Login </router-link>
-    <button @click="handleSignOut" v-if="isLoggedIn">Se déconnecter</button>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
+
+      <router-link to="/" class="navbar-brand">
+        <img src="./assets/images/Ubeer.png" alt="Logo" class="navbar-logo">
+        <h1 class="navbar-title">Ubeer</h1>
+      </router-link>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <router-link class="nav-link" to="/"> Accueil </router-link>
+          </li>
+          <li class="nav-item">
+            <router-link class="nav-link" to="/CatalogueView.vue"> Catalogue </router-link>
+          </li>
+          <li class="nav-item">
+            <router-link class="nav-link" to="/catalogueAdmin"> Admin BDD </router-link>
+          </li>
+          <li class="nav-item" v-if="!isLoggedIn">
+            <router-link class="btn btn-dark" to="/register"> S'inscrire </router-link>
+          </li>
+          <li class="nav-item" v-if="!isLoggedIn">
+            <router-link class="btn btn-success" to="/sign-in"> Connexion </router-link>
+          </li>
+          <li class="nav-item" v-if="isLoggedIn">
+            <button @click="handleSignOut" class="btn btn-danger">Se déconnecter</button>
+          </li>
+        </ul>
+      </div>
+
+    </div>
   </nav>
+
   <router-view />
 </template>
 
@@ -16,8 +47,8 @@ import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import { useRouter } from "vue-router";
 
 const isLoggedIn = ref(false);
-const auth = getAuth();  // Initialize Firebase Auth
-const router = useRouter();  // This ensures you have access to `router`
+const auth = getAuth();
+const router = useRouter();
 
 onMounted(() => {
   onAuthStateChanged(auth, (user) => {
@@ -27,18 +58,29 @@ onMounted(() => {
 
 const handleSignOut = () => {
   signOut(auth).then(() => {
-    router.push("/");  // Corrected from `route` to `router`
+    router.push("/");
   }).catch((error) => {
-    console.error("Error signing out: ", error);
+    console.error("Erreur lors de la déconnexion : ", error);
   });
 };
-
 </script>
 
-<style>
-
-.marginNav {
-  margin: 0 5px;
+<style scoped>
+.navbar-brand {
+  display: flex;
+  align-items: center;
 }
 
+.navbar-logo {
+  width: 40px;
+  margin-right: 10px;
+}
+
+.btn-dark {
+  margin: 0 5px 0 15px;
+}
+
+.btn-danger {
+  margin: 0 5px 0 15px;
+}
 </style>

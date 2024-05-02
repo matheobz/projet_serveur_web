@@ -1,18 +1,31 @@
 <template>
-    <h1>Register</h1>
-    <h2>Créer un compte</h2>
-    <p>test@mail.com</p>
-    <p><input type="text" placeholder="Email" v-model="email" /></p>
-    <p>password</p>
-    <p><input type="password" placeholder="Password" v-model="password" /></p>
-    <p>jean</p>
-    <p><input type="text" placeholder="Pseudo" v-model="pseudo" /></p>
-    <p>
-        <button @click="register">Envoyer</button>
-    </p>
-    <p><button @click="signInWithGoogle">Register with Google</button></p>
-
-    <p v-if="errorMsg">{{ errorMsg }}</p>
+    <section class="d-flex justify-content-center align-items-center">
+        <div class="container mt-5 block">
+            <h1>Créer un compte</h1>
+            <form @submit.prevent="register">
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" placeholder="Email" v-model="email">
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Mot de passe</label>
+                    <input type="password" class="form-control" id="password" placeholder="Mot de passe"
+                        v-model="password">
+                </div>
+                <div class="mb-3">
+                    <label for="pseudo" class="form-label">Username</label>
+                    <input type="text" class="form-control" id="pseudo" placeholder="Username" v-model="pseudo">
+                </div>
+                <button type="submit" class="btn btn-primary">Envoyer</button><br>
+                <button @click="signInWithGoogle" class="google-button">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/768px-Google_%22G%22_logo.svg.png"
+                        alt="Google Logo" width="24" height="24" />
+                    Register with Google
+                </button>
+            </form>
+            <p class="mt-3 text-danger" v-if="errorMsg">{{ errorMsg }}</p>
+        </div>
+    </section>
 </template>
 
 <script>
@@ -64,7 +77,7 @@ export default {
                     return batch.commit();
                 })
                 .then(() => {
-                    router.push('/feed');
+                    router.push('/CatalogueView.vue');
                 })
                 .catch((error) => {
                     errorMsg.value = error.message;
@@ -94,7 +107,7 @@ export default {
                     })
                 })
                 .then(() => {
-                    router.push("/feed");
+                    router.push("/CatalogueView.vue");
                 })
                 .catch((error) => {
                     errorMsg.value = error.message;
@@ -108,4 +121,26 @@ export default {
 </script>
 
 
-<style scoped></style>
+<style scoped>
+.block {
+    width: 400px;
+}
+
+.google-button {
+    background-color: #fff;
+    color: #757575;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 10px 15px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    margin: 10px 0 0 0;
+}
+
+.google-button img {
+    margin-right: 10px;
+}
+</style>

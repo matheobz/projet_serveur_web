@@ -1,10 +1,29 @@
 <template>
-    <h1>Sign-in</h1>
-    <h2>Se connecter</h2>
-    <p><input type="text" placeholder="Email" v-model="email" /></p>
-    <p><input type="password" placeholder="Password" v-model="password" /></p>
-    <p><button @click="register">Envoyer</button></p>
-    <button @click="signInWithGoogle">Sign In with Google</button>
+    <section class="d-flex justify-content-center align-items-center">
+        <div class="container mt-5 block">
+            <h1>Se connecter</h1>
+            <form @submit.prevent="register">
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" placeholder="Email" v-model="email">
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Mot de passe</label>
+                    <input type="password" class="form-control" id="password" placeholder="Mot de passe" v-model="password">
+                </div>
+                <button type="submit" class="btn btn-primary">Envoyer</button>
+            </form><button @click="signInWithGoogle" class="google-button">
+            <img
+          src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/768px-Google_%22G%22_logo.svg.png"
+          alt="Google Logo"
+          width="24"
+          height="24"
+        />
+        Connexion avec Google
+      </button>
+            <p class="mt-3 text-danger" v-if="errorMsg">{{ errorMsg }}</p>
+        </div>
+    </section>
 </template>
 
 <script>
@@ -16,7 +35,7 @@ import {
     signInWithPopup,
     signInWithEmailAndPassword
 } from "firebase/auth";
-import { doc, getDoc, writeBatch, getFirestore} from "firebase/firestore"; // Make sure to import writeBatch
+import { doc, getDoc, writeBatch, getFirestore } from "firebase/firestore"; // Make sure to import writeBatch
 
 export default {
     setup() {
@@ -31,11 +50,11 @@ export default {
             signInWithEmailAndPassword(getAuth(), email.value, password.value)
                 .then(() => {
                     console.log("Successfully signed in!");
-                    router.push('/feed');
+                    router.push('/CatalogueView.vue');
                 })
                 .catch((error) => {
                     console.error(error.code);
-                    alert(error.message);
+                    errorMsg.value = error.message;
                 });
         };
 
@@ -61,25 +80,45 @@ export default {
                     })
                 })
                 .then(() => {
-                    router.push("/feed");
+                    router.push("/CatalogueView.vue");
                 })
                 .catch((error) => {
                     errorMsg.value = error.message;
                     console.error("Google sign in error:", error.code);
                 });
         };
+
         const checkUsernameUnique = async (username) => {
             const docRef = doc(db, "usernames", username);
             const docSnap = await getDoc(docRef);
             return !docSnap.exists(); // Returns true if username is unique
         };
 
-       
-
-        return { email, password, register, signInWithGoogle };
+        return { email, password, register, signInWithGoogle, errorMsg };
     }
 }
 </script>
 
+<style scoped>
+.block {
+    width: 400px;
+}
 
-<style scoped></style>
+.google-button {
+    background-color: #fff;
+    color: #757575;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 10px 15px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    margin: 10px 0 0 0;
+}
+
+.google-button img {
+    margin-right: 10px;
+}
+</style>

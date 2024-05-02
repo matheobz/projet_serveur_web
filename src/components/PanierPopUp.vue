@@ -1,3 +1,13 @@
+<!-- <template>
+  <h1>Catalogue</h1>
+</template>
+
+<script>
+</script>
+
+<style scoped>
+</style> -->
+
 <template>
   <div>
     <div class="boutton" @click="togglePopup">
@@ -73,10 +83,10 @@ export default {
 
 
 .boutton {
-  padding: 12px;
+  padding: 27px;
   border-radius: 50px;
   transition: 0.2s;
-  background-color: rgb(24, 24, 223);
+  background-color: rgb(17, 138, 67);
   width: 30px;
   height: 30px;
   display: flex;
@@ -91,7 +101,7 @@ export default {
 
 .boutton .material-symbols-outlined {
   font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
-  font-size: 1.5rem;
+  font-size: 1.7rem;
   color: #ffffff;
   top: 2px;
   position: relative;
