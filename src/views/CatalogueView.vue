@@ -21,10 +21,10 @@
             <p class="card-text">Degré d'alcool : {{ biere.degreAlcool }}%</p>
             <p class="card-text">Prix : {{ biere.prix }} €</p>
             <p class="card-text"><strong>Brasserie :</strong> {{ biere.brasserieNom }}</p>
-            <div class="d-flex justify-content-between align-items-center">
-              <button @click="modifierQuantite(biere, -1)" class="btn btn-danger btn-sm">-</button>
-              <span>{{ getQuantite(biere) }}</span>
-              <button @click="modifierQuantite(biere, 1)" class="btn btn-success btn-sm">+</button>
+            <div class="d-flex ">
+              <button @click="modifierQuantite(biere, -1)" class="btn btn-danger btn-sm margincote">-</button>
+              <span class="margincote">{{ getQuantite(biere) }}</span>
+              <button @click="modifierQuantite(biere, 1)" class="btn btn-success btn-sm margincote">+</button>
             </div>
           </div>
         </div>
@@ -49,16 +49,21 @@
           </li>
         </ul>
         <p><strong>Total : </strong>{{ totalCommande }} €</p>
-        <button @click="fermerPanier" class="btn btn-secondary">Fermer</button>
+        <div class="d-flex justify-content-between">
+          <button @click="fermerPanier" class="btn btn-secondary">Fermer</button>
+          <button @click="validerCommande" class="btn btn-primary">Valider la commande</button>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { getFirestore, collectionGroup, onSnapshot, getDoc } from "firebase/firestore";
+import { getFirestore, collection, collectionGroup, onSnapshot, getDoc, addDoc } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 
 export default {
+  // Configuration de la vue
   data() {
     return {
       bieres: [],
@@ -97,14 +102,6 @@ export default {
         this.bieres.sort((a, b) => a.degreAlcool - b.degreAlcool);
       }
     },
-    ajouterAuPanier(biere) {
-      const index = this.panier.findIndex(item => item.biere.id === biere.id);
-      if (index !== -1) {
-        this.panier[index].quantite += 1;
-      } else {
-        this.panier.push({ biere, quantite: 1 });
-      }
-    },
     modifierQuantite(biere, quantite) {
       const index = this.panier.findIndex(item => item.biere.id === biere.id);
       if (index !== -1) {
@@ -125,12 +122,40 @@ export default {
     },
     fermerPanier() {
       this.panierOuvert = false;
+    },
+    async validerCommande() {
+      const auth = getAuth();
+      const user = auth.currentUser;
+
+      if (!user) {
+        alert("Veuillez vous connecter pour valider la commande.");
+        return;
+      }
+
+      const db = getFirestore();
+      const commande = {
+        items: this.panier.map(item => ({
+          nom: item.biere.nom,
+          quantite: item.quantite,
+          prix: item.biere.prix
+        })),
+        total: parseFloat(this.totalCommande)
+      };
+
+      await addDoc(collection(db, "users", user.uid, "commandes"), commande);
+      alert("Commande validée avec succès !");
+      this.panier = [];
+      this.fermerPanier();
     }
   }
 };
 </script>
 
 <style scoped>
+.margincote{
+  margin : 0 3px 0 3px;
+}
+
 .img-beer {
   height: 277px;
   width: auto;

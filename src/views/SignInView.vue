@@ -9,18 +9,15 @@
                 </div>
                 <div class="mb-3">
                     <label for="password" class="form-label">Mot de passe</label>
-                    <input type="password" class="form-control" id="password" placeholder="Mot de passe" v-model="password">
+                    <input type="password" class="form-control" id="password" placeholder="Mot de passe"
+                        v-model="password">
                 </div>
                 <button type="submit" class="btn btn-primary">Envoyer</button>
             </form><button @click="signInWithGoogle" class="google-button">
-            <img
-          src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/768px-Google_%22G%22_logo.svg.png"
-          alt="Google Logo"
-          width="24"
-          height="24"
-        />
-        Connexion avec Google
-      </button>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/768px-Google_%22G%22_logo.svg.png"
+                    alt="Google Logo" width="24" height="24" />
+                Connexion avec Google
+            </button>
             <p class="mt-3 text-danger" v-if="errorMsg">{{ errorMsg }}</p>
         </div>
     </section>
@@ -58,34 +55,43 @@ export default {
                 });
         };
 
-        const signInWithGoogle = () => {
+        const signInWithGoogle = async () => {
             const provider = new GoogleAuthProvider();
-            signInWithPopup(auth, provider)
-                .then((result) => {
+            try {
+                const result = await signInWithPopup(auth, provider);
+                const userUid = result.user.uid;
+                const userDocRef = doc(db, "users", userUid);
+
+                const userDocSnap = await getDoc(userDocRef);
+
+                if (!userDocSnap.exists()) {
+                    // L'utilisateur n'existe pas encore dans la base de données
                     let pseudoGenerated = result.user.email.split('@')[0];
-                    checkUsernameUnique(pseudoGenerated).then((isUnique) => {
-                        if (!isUnique) {
-                            pseudoGenerated += Math.floor(Math.random() * 1000); // Attempt to make a unique username
-                        }
-                        const batch = writeBatch(db); // Correct usage of batch
-                        const userDoc = doc(db, "users", result.user.uid);
-                        const usernameDoc = doc(db, "usernames", pseudoGenerated);
-                        batch.set(userDoc, {
-                            uid: result.user.uid,
-                            email: result.user.email,
-                            pseudo: pseudoGenerated,
-                        });
-                        batch.set(usernameDoc, { uid: result.user.uid });
-                        return batch.commit();
-                    })
-                })
-                .then(() => {
-                    router.push("/CatalogueView.vue");
-                })
-                .catch((error) => {
-                    errorMsg.value = error.message;
-                    console.error("Google sign in error:", error.code);
-                });
+                    const isUnique = await checkUsernameUnique(pseudoGenerated);
+
+                    if (!isUnique) {
+                        pseudoGenerated += Math.floor(Math.random() * 1000); // Tente de rendre le pseudo unique
+                    }
+
+                    const batch = writeBatch(db); // Usage correct du batch
+                    batch.set(userDocRef, {
+                        uid: userUid,
+                        email: result.user.email,
+                        pseudo: pseudoGenerated,
+                    });
+                    const usernameDoc = doc(db, "usernames", pseudoGenerated);
+
+                    batch.set(usernameDoc, { uid: userUid });
+
+                    await batch.commit();
+                }
+
+                // Redirige l'utilisateur vers la page de catalogue
+                router.push("/CatalogueView.vue");
+            } catch (error) {
+                errorMsg.value = error.message;
+                console.error("Erreur de connexion Google:", error.code);
+            }
         };
 
         const checkUsernameUnique = async (username) => {
