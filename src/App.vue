@@ -1,9 +1,10 @@
 <template>
   <nav>
-    <router-link to="/"> Home </router-link>
-    <router-link to="/feed"> Feed </router-link>
-    <router-link to="/register"> Register </router-link>
-    <router-link to="/sign-in"> Login </router-link>
+    <router-link class="marginNav" to="/"> Home </router-link>
+    <router-link class="marginNav" to="/catalogueAdmin"> Catalogue admin </router-link>
+    <router-link class="marginNav" to="/feed"> Feed </router-link>
+    <router-link class="marginNav" to="/register"> Register </router-link>
+    <router-link class="marginNav" to="/sign-in"> Login </router-link>
     <button @click="handleSignOut" v-if="isLoggedIn">Se déconnecter</button>
   </nav>
   <router-view />
@@ -35,5 +36,9 @@ const handleSignOut = () => {
 </script>
 
 <style>
+
+.marginNav {
+  margin: 0 5px;
+}
 
 </style>

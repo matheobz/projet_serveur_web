@@ -7,8 +7,9 @@ const router = createRouter({
         { path: "/", component: () => import("../views/HomeView.vue") },
         { path: "/register", component: () => import("../views/RegisterView.vue") },
         { path: "/sign-in", component: () => import("../views/SignInView.vue") },
-        { 
-            path: "/feed", 
+        { path: "/catalogueAdmin", component: () => import("../views/CatalogueAdmin.vue") },
+        {
+            path: "/feed",
             component: () => import("../views/FeedView.vue"),
             meta: { requiresAuth: true },
         },

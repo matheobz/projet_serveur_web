@@ -9,8 +9,9 @@
     <p><input type="text" placeholder="Pseudo" v-model="pseudo" /></p>
     <p>
         <button @click="register">Envoyer</button>
-        <button @click="signInWithGoogle">Register with Google</button>
     </p>
+    <p><button @click="signInWithGoogle">Register with Google</button></p>
+
     <p v-if="errorMsg">{{ errorMsg }}</p>
 </template>
 
