@@ -3,29 +3,45 @@
     <h1 class="mb-4">Brasseries</h1>
     <ul class="list-group">
       <li v-for="brasserie in brasseries" :key="brasserie.id" class="list-group-item">
-        <strong>{{ brasserie.nom }}</strong> - {{ brasserie.localisation }}
-        <img :src="brasserie.imageUrl || 'https://www.lejuke-box.fr/wp-content/uploads/2019/10/abendbrot-939435_1920-1080x675.jpg'" alt="Image de la brasserie" width="100">
-        <input type="file" @change="uploadBrasserieImage($event, brasserie.id)">
-        <button @click="deleteBrasserie(brasserie.id)" class="btn btn-danger btn-sm mx-2">Supprimer</button>
-        <button @click="toggleBiereView(brasserie.id)" class="btn btn-info btn-sm">Voir les bières</button>
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <strong>{{ brasserie.nom }}</strong> - {{ brasserie.localisation }}
+          </div>
+          <div class="d-flex align-items-center">
+            <img :src="brasserie.imageUrl || 'https://www.lejuke-box.fr/wp-content/uploads/2019/10/abendbrot-939435_1920-1080x675.jpg'" alt="Image de la brasserie" class="img-thumbnail" width="100">
+            <div class="ml-3 d-flex align-items-center">
+              <label class="custom-file-upload mr-3">
+                <input type="file" @change="uploadBrasserieImage($event, brasserie.id)">
+                Choisir un fichier
+              </label>
+              <button @click="deleteBrasserie(brasserie.id)" class="btn btn-danger btn-sm mr-3">Supprimer</button>
+              <button @click="toggleBiereView(brasserie.id)" class="btn btn-info btn-sm">Voir les bières</button>
+            </div>
+          </div>
+        </div>
 
         <div v-if="brasserie.id === currentBrasserieId" class="mt-3">
           <h2>Bières de {{ brasserie.nom }}</h2>
           <ul class="list-group">
             <li v-for="biere in bieres" :key="biere.id" class="list-group-item">
-              {{ biere.nom }} - {{ biere.type }} - {{ biere.degreAlcool }}% - {{ biere.prix }}€
-              <img :src="biere.imageUrl || 'https://www.1001cocktails.com/wp-content/uploads/1001cocktails/2023/07/shutterstock_2173861113-scaled.jpg'" alt="Image de la bière" width="100">
-              <input type="file" @change="uploadBiereImage($event, biere.id)">
-              <button @click="deleteBiere(biere.id)" class="btn btn-danger btn-sm float-right">Supprimer</button>
+              <div class="d-flex justify-content-between align-items-center">
+                {{ biere.nom }} - {{ biere.type }} - {{ biere.degreAlcool }}% - {{ biere.prix }}€
+                <div class="d-flex align-items-center">
+                  <img :src="biere.imageUrl || 'https://www.1001cocktails.com/wp-content/uploads/1001cocktails/2023/07/shutterstock_2173861113-scaled.jpg'" alt="Image de la bière" class="img-thumbnail" width="100">
+                  <label class="custom-file-upload ml-3 mr-3">
+                    <input type="file" @change="uploadBiereImage($event, biere.id)">
+                    Choisir un fichier
+                  </label>
+                  <button @click="deleteBiere(biere.id)" class="btn btn-danger btn-sm">Supprimer</button>
+                </div>
+              </div>
             </li>
           </ul>
           <div class="form-inline mt-3">
             <input v-model="newBiere.nom" class="form-control mb-2 mr-sm-2" placeholder="Nom de la Bière">
             <input v-model="newBiere.type" class="form-control mb-2 mr-sm-2" placeholder="Type">
-            <input v-model="newBiere.degreAlcool" type="number" step="0.01" class="form-control mb-2 mr-sm-2"
-              placeholder="Degré d'Alcool">
-            <input v-model="newBiere.prix" type="number" step="0.01" class="form-control mb-2 mr-sm-2"
-              placeholder="Prix">
+            <input v-model="newBiere.degreAlcool" type="number" step="0.01" class="form-control mb-2 mr-sm-2" placeholder="Degré d'Alcool">
+            <input v-model="newBiere.prix" type="number" step="0.01" class="form-control mb-2 mr-sm-2" placeholder="Prix">
             <button @click="addBiere(brasserie.id)" class="btn btn-primary mb-2">Ajouter</button>
           </div>
         </div>
@@ -39,7 +55,6 @@
   </div>
 </template>
 
-
 <script>
 import { getFirestore, collection, addDoc, doc, deleteDoc, onSnapshot, updateDoc } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
@@ -50,7 +65,7 @@ export default {
       brasseries: [],
       bieres: [],
       newBrasserie: { nom: "", localisation: "" },
-      newBiere: { nom: "", type: "", degreAlcool: "", prix: "" }, // Ajout du champ prix
+      newBiere: { nom: "", type: "", degreAlcool: "", prix: "" },
       currentBrasserieId: null
     };
   },
@@ -58,7 +73,6 @@ export default {
     const db = getFirestore();
     const brasserieCollection = collection(db, "brasseries");
 
-    // Écouter les changements en temps réel pour les brasseries
     onSnapshot(brasserieCollection, (snapshot) => {
       this.brasseries = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
     });
@@ -68,7 +82,6 @@ export default {
       const db = getFirestore();
       const brasserieCollection = collection(db, "brasseries");
 
-      // Ajouter une nouvelle brasserie
       await addDoc(brasserieCollection, this.newBrasserie);
       this.newBrasserie = { nom: "", localisation: "" };
     },
@@ -76,7 +89,6 @@ export default {
       const db = getFirestore();
       const brasserieDoc = doc(db, "brasseries", id);
 
-      // Supprimer la brasserie
       await deleteDoc(brasserieDoc);
       this.currentBrasserieId = null;
       this.bieres = [];
@@ -94,7 +106,6 @@ export default {
       const db = getFirestore();
       const biereCollection = collection(db, "brasseries", brasserieId, "bieres");
 
-      // Écouter les changements en temps réel pour les bières
       onSnapshot(biereCollection, (snapshot) => {
         this.bieres = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
       });
@@ -103,20 +114,18 @@ export default {
       const db = getFirestore();
       const biereCollection = collection(db, "brasseries", brasserieId, "bieres");
 
-      // Ajouter une nouvelle bière
       await addDoc(biereCollection, {
         nom: this.newBiere.nom,
         type: this.newBiere.type,
         degreAlcool: this.newBiere.degreAlcool,
-        prix: this.newBiere.prix // Ajout du prix
+        prix: this.newBiere.prix
       });
-      this.newBiere = { nom: "", type: "", degreAlcool: "", prix: "" }; // Réinitialiser le formulaire
+      this.newBiere = { nom: "", type: "", degreAlcool: "", prix: "" };
     },
     async deleteBiere(id) {
       const db = getFirestore();
       const biereDoc = doc(db, "brasseries", this.currentBrasserieId, "bieres", id);
 
-      // Supprimer la bière
       await deleteDoc(biereDoc);
     },
     async uploadBrasserieImage(event, brasserieId) {
@@ -146,3 +155,35 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.img-thumbnail {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 5px;
+  background-color: #f7f7f7;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.custom-file-upload {
+  border: 1px solid #ddd;
+  display: inline-block;
+  padding: 6px 12px;
+  cursor: pointer;
+  background-color: #f7f7f7;
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.custom-file-upload input[type="file"] {
+  display: none;
+}
+
+.mr-3 {
+  margin-right: 1rem !important;
+}
+
+.ml-3 {
+  margin-left: 1rem !important;
+}
+</style>

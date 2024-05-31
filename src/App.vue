@@ -37,7 +37,7 @@
 
     </div>
   </nav>
-
+<div style="height: 70px;"></div>
   <router-view />
 </template>
 
@@ -66,6 +66,12 @@ const handleSignOut = () => {
 </script>
 
 <style scoped>
+.navbar{
+  position: fixed;
+  width: 100%;
+  z-index: 2;
+}
+
 .navbar-brand {
   display: flex;
   align-items: center;
