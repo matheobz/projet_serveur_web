@@ -157,17 +157,21 @@ export default {
       await deleteDoc(biereDoc);
     },
     async uploadBrasserieImage(event, brasserieId) {
-      const file = event.target.files[0];
-      if (file) {
-        const storage = getStorage();
-        const storageRef = ref(storage, `brasseries/${brasserieId}/${file.name}`);
-        await uploadBytes(storageRef, file);
-        const imageUrl = await getDownloadURL(storageRef);
-        const db = getFirestore();
-        const brasserieDoc = doc(db, "brasseries", brasserieId);
-        await updateDoc(brasserieDoc, { imageUrl });
-      }
-    },
+  const file = event.target.files[0];
+  if (file) {
+    const storage = getStorage();
+    const storageRef = ref(storage, `brasseries/${brasserieId}/${file.name}`);
+    try {
+      await uploadBytes(storageRef, file);
+      const imageUrl = await getDownloadURL(storageRef);
+      const db = getFirestore();
+      const brasserieDoc = doc(db, "brasseries", brasserieId);
+      await updateDoc(brasserieDoc, { imageUrl });
+    } catch (error) {
+      console.error("Erreur lors de l'upload de l'image : ", error);
+    }
+  }
+},
     async uploadBiereImage(event, biereId) {
       const file = event.target.files[0];
       if (file) {
