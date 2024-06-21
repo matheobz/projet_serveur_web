@@ -1,5 +1,5 @@
 <template>
-  <div class="container mt-5">
+  <div v-if="accessGranted" class="container mt-5">
     <h1 class="mb-4">Brasseries</h1>
     <ul class="list-group">
       <li v-for="brasserie in brasseries" :key="brasserie.id" class="list-group-item">
@@ -53,6 +53,16 @@
       <button @click="addBrasserie" class="btn btn-success mb-2">Ajouter</button>
     </div>
   </div>
+  <div v-else>
+    <div class="d-flex justify-content-center align-items-center vh-100">
+      <div class="text-center">
+        <h2>Entrez le code d'accès</h2>
+        <input v-model="accessCodeInput" class="form-control mb-2" placeholder="Code d'accès" type="password">
+        <button @click="verifyAccessCode" class="btn btn-primary">Vérifier</button>
+        <p v-if="accessDenied" class="text-danger mt-2">Code incorrect. Veuillez réessayer.</p>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -66,18 +76,36 @@ export default {
       bieres: [],
       newBrasserie: { nom: "", localisation: "" },
       newBiere: { nom: "", type: "", degreAlcool: "", prix: "" },
-      currentBrasserieId: null
+      currentBrasserieId: null,
+      accessCodeInput: "",
+      accessGranted: false,
+      accessDenied: false,
+      correctAccessCode: "usopp" // Le code
     };
   },
-  mounted() {
-    const db = getFirestore();
-    const brasserieCollection = collection(db, "brasseries");
-
-    onSnapshot(brasserieCollection, (snapshot) => {
-      this.brasseries = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-    });
+  created() {
+    if (this.accessGranted) {
+      this.loadBrasseries();
+    }
   },
   methods: {
+    verifyAccessCode() {
+      if (this.accessCodeInput === this.correctAccessCode) {
+        this.accessGranted = true;
+        this.accessDenied = false;
+        this.loadBrasseries();
+      } else {
+        this.accessDenied = true;
+      }
+    },
+    loadBrasseries() {
+      const db = getFirestore();
+      const brasserieCollection = collection(db, "brasseries");
+
+      onSnapshot(brasserieCollection, (snapshot) => {
+        this.brasseries = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      });
+    },
     async addBrasserie() {
       const db = getFirestore();
       const brasserieCollection = collection(db, "brasseries");
@@ -185,5 +213,9 @@ export default {
 
 .ml-3 {
   margin-left: 1rem !important;
+}
+
+.vh-100 {
+  height: 100vh;
 }
 </style>

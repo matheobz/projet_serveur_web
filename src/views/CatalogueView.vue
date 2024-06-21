@@ -31,7 +31,7 @@
       </div>
     </div>
 
-    <button @click="ouvrirPanier" class="btn btn-primary mt-3">
+    <button @click="ouvrirPanier" class="btn btn-primary mt-3 mb-3">
       Voir le Panier
     </button>
 

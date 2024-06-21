@@ -20,7 +20,7 @@
                 <button @click="signInWithGoogle" class="google-button">
                     <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/768px-Google_%22G%22_logo.svg.png"
                         alt="Google Logo" width="24" height="24" />
-                    Register with Google
+                    S'inscrire avec Google
                 </button>
             </form>
             <p class="mt-3 text-danger" v-if="errorMsg">{{ errorMsg }}</p>
@@ -36,7 +36,7 @@ import {
     GoogleAuthProvider,
     signInWithPopup,
 } from "firebase/auth";
-import { doc, getFirestore, getDoc, writeBatch } from "firebase/firestore"; // Make sure to import writeBatch
+import { doc, getFirestore, getDoc, writeBatch, collection } from "firebase/firestore";
 import { useRouter } from 'vue-router';
 
 export default {
@@ -50,12 +50,18 @@ export default {
         const db = getFirestore();
 
         const checkUsernameUnique = async (username) => {
-            const docRef = doc(db, "usernames", username);
+            if (!username) return false; // Return false if username is empty
+            const docRef = doc(collection(db, "usernames"), username);
             const docSnap = await getDoc(docRef);
             return !docSnap.exists(); // Returns true if username is unique
         };
 
         const register = async () => {
+            if (!email.value || !password.value || !pseudo.value) {
+                errorMsg.value = "Tous les champs sont obligatoires.";
+                return;
+            }
+
             const isUnique = await checkUsernameUnique(pseudo.value);
             if (!isUnique) {
                 errorMsg.value = "Ce pseudo est déjà utilisé. Veuillez en choisir un autre.";
@@ -65,9 +71,9 @@ export default {
             createUserWithEmailAndPassword(auth, email.value, password.value)
                 .then((userCredential) => {
                     console.log("Successfully registered!");
-                    const batch = writeBatch(db); // Correct usage of batch
+                    const batch = writeBatch(db);
                     const userDoc = doc(db, "users", userCredential.user.uid);
-                    const usernameDoc = doc(db, "usernames", pseudo.value);
+                    const usernameDoc = doc(collection(db, "usernames"), pseudo.value);
                     batch.set(userDoc, {
                         uid: userCredential.user.uid,
                         email: email.value,
@@ -94,9 +100,9 @@ export default {
                         if (!isUnique) {
                             pseudoGenerated += Math.floor(Math.random() * 1000); // Attempt to make a unique username
                         }
-                        const batch = writeBatch(db); // Correct usage of batch
+                        const batch = writeBatch(db);
                         const userDoc = doc(db, "users", result.user.uid);
-                        const usernameDoc = doc(db, "usernames", pseudoGenerated);
+                        const usernameDoc = doc(collection(db, "usernames"), pseudoGenerated);
                         batch.set(userDoc, {
                             uid: result.user.uid,
                             email: result.user.email,
@@ -119,7 +125,6 @@ export default {
     }
 }
 </script>
-
 
 <style scoped>
 .block {

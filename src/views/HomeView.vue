@@ -44,7 +44,7 @@
   #home {
     font-family: 'Arial', sans-serif;
     color: #fff;
-    background-color: #000;
+    background-color: #303030;
     text-align: center;
     padding: 40px;
   }
